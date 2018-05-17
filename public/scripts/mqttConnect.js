@@ -1,4 +1,5 @@
-var mqtt_host = 'agf5n9.messaging.internetofthings.ibmcloud.com'
+
+var mqtt_host = window.IOT_ORG + '.messaging.internetofthings.ibmcloud.com'
 var mqtt_port = 443
 var useTLS = true // true ssl
 var cleansession = true;
@@ -6,7 +7,7 @@ var clients = {}
 // var useTLS = false // true ssl
 
 // init first client
-var client_prefix = 'a:agf5n9:'
+var client_prefix = 'a:' + window.IOT_ORG + ':'
 var audio = document.getElementById('playResults');
 var source = document.getElementById('wavSource');
 
@@ -59,7 +60,7 @@ function addClient(clientName, language) {
             {
               onSuccess: function () {
                 console.log(clientName + ' successfully subscribed to ' + watson_channel);
-                publish(clientName + " has joined the session",  'iot-2/type/MQTTDevice/id/965d11de/evt/logs/fmt/json', 2, 'serverLogs')
+                publish(clientName + " has joined the session",  'iot-2/type' + window.IOT_DEVICE_TYPE + 'id/' + window.IOT_DEVICE_ID + '/evt/logs/fmt/json', 2, 'serverLogs')
                   // subscribe to initial client
                  //  clientName = 'client1'
                  //  clients[clientName].subscribe('languagetest/translated/' + document.querySelector(`#${clientName}_language`).value);
@@ -116,7 +117,7 @@ function addClient(clientName, language) {
             'client': '${clientName}'
         }
       },
-      'iot-2/type/MQTTDevice/id/965d11de/evt/msgout/fmt/json',
+      'iot-2/type' + window.IOT_DEVICE_TYPE + 'id/' + window.IOT_DEVICE_ID + '/evt/fromClient/fmt/json',
       2,
       '${clientName}'
     )"
@@ -182,7 +183,7 @@ function addClient(clientName, language) {
                             'client': '${clientName}'
                           }
                         },
-                      'iot-2/type/MQTTDevice/id/965d11de/evt/msgout/fmt/json',
+                      'iot-2/type' + window.IOT_DEVICE_TYPE + 'id/${process.env.IOT_DEVICE_ID}/evt/fromClient/fmt/json',
                       2,
                       '${clientName}'
       )">Submit</button>
@@ -210,7 +211,7 @@ function addClient(clientName, language) {
                           // 'client': 'client1'
                         }
                       },
-                    'iot-2/type/MQTTDevice/id/965d11de/evt/msgout/fmt/json',
+                    'iot-2/type' + window.IOT_DEVICE_TYPE + 'id/' + window.IOT_DEVICE_ID + '/evt/fromClient/fmt/json',
                     2,
                     clientName
               )
@@ -332,12 +333,12 @@ var options = {
      timeout: 40,
      cleanSession: cleansession,
      useSSL: useTLS,
-     userName: 'a-agf5n9-ysppbltpx0',
-     password: '9W1x8syMb-AOku(H_3',
+     userName: window.IOT_API_KEY,
+     password: window.IOT_AUTH_TOKEN,
      onSuccess: function () {
          console.log("Connected");
 
-         var watson_channel = 'iot-2/type/MQTTDevice/id/965d11de/evt/'+  "msgin" + '/fmt/json'
+         var watson_channel = 'iot-2/type' + window.IOT_DEVICE_TYPE + 'id/' + window.IOT_DEVICE_ID + '/evt/'+  "msgin" + '/fmt/json'
          clients['client1'].subscribe( watson_channel,
            {
              onSuccess: function () {

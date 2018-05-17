@@ -869,7 +869,7 @@ exports.showResult = function(msg, baseString, model) {
       // if ($('#resultsText').val().length > 0)
       //   {
       //     console.log("message recorded")
-      //     // var watson_channel = 'iot-2/type/MQTTDevice/id/965d11de/evt/ '+  "msgin" + '/fmt/json'
+      //     // var watson_channel = 'iot-2/type/MQTTDevice/id/' + window.IOT_DEVICE_ID + '/evt/ '+  "msgin" + '/fmt/json'
       //     var j = {
       //         'd': {
       //           'language': document.querySelector('#client1_language').value,
@@ -878,7 +878,7 @@ exports.showResult = function(msg, baseString, model) {
       //       }
       //     };
       //     // publish($('#resultsText').val(),'languagetest/clientout/text/' + document.querySelector('#client1_language').value + '/' + clientId ,2, "client1")
-      //     publish(j, 'iot-2/type/MQTTDevice/id/965d11de/evt/'+  "msgout" + '/fmt/json' , 2, "client1")
+      //     publish(j, 'iot-2/type/MQTTDevice/id/' + window.IOT_DEVICE_ID + '/evt/'+  "fromClient" + '/fmt/json' , 2, "client1")
       //     $('#resultsText').val('')
       //   }
     }
