@@ -9,33 +9,61 @@
     <link href="css/watson-bootstrap-style.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
     <link rel="shortcut icon" href="images/favicon.ico" />
-    <script src="scripts/mqttws31.js" type="text/javascript"></script>
-    <script src="scripts/mqttConnect.js" type="text/javascript"></script>
-    <script defer src="scripts/watsonServices.js" type="text/javascript"></script>
+    <script type="text/javascript">
+    function loadMQTTCreds() {
+      // window.IOT_DEVICE_ID = "<%= process.env.IOT_DEVICE_ID %>"
+      // window.IOT_AUTH_TOKEN = "<%= process.env.IOT_AUTH_TOKEN %>"
+      // window.IOT_API_KEY = "<%= process.env.IOT_API_KEY %>"
+      // window.IOT_ORG_ID = "<%= process.env.IOT_ORG_ID %>"
+      // window.IOT_DEVICE_TYPE = "<%= process.env.IOT_DEVICE_TYPE %>"
+      var credentials = {
+        IOT_DEVICE_ID: "<%= process.env.IOT_DEVICE_ID %>",
+        IOT_AUTH_TOKEN: "<%= process.env.IOT_AUTH_TOKEN %>",
+        IOT_API_KEY: "<%= process.env.IOT_API_KEY %>",
+        IOT_ORG_ID: "agf5n9", //"<%= process.env.IOT_ORG_ID %>",
+        IOT_DEVICE_TYPE: "<%= process.env.IOT_DEVICE_TYPE %>"
+      }
+      return credentials
+      console.log("credentials loaded")
+    }
+    </script>
   </head>
   <body>
     <!-- top nav section -->
+    <script src="scripts/mqttws31.js" type="text/javascript"></script>
+    <script src="scripts/mqttConnect.js" type="text/javascript"></script>
+    <script src="scripts/watsonServices.js" type="text/javascript"></script>
 
-    <script defer type="text/javascript">
-    window.IOT_DEVICE_ID = "<%= process.env.IOT_DEVICE_ID %>"
-    window.IOT_AUTH_TOKEN = "<%= process.env.IOT_AUTH_TOKEN %>"
-    window.IOT_API_KEY = "<%= process.env.IOT_API_KEY %>"
-    window.IOT_ORG = "<%= process.env.IOT_ORG %>"
+    <script type="text/javascript">
+    // window.IOT_DEVICE_ID = "<%= process.env.IOT_DEVICE_ID %>"
+    // window.IOT_AUTH_TOKEN = "<%= process.env.IOT_AUTH_TOKEN %>"
+    // window.IOT_API_KEY = "<%= process.env.IOT_API_KEY %>"
+    // window.IOT_ORG_ID = "<%= process.env.IOT_ORG_ID %>"
+    // window.IOT_DEVICE_TYPE = "<%= process.env.IOT_DEVICE_TYPE %>"
+    // console.log(window.IOT_DEVICE_ID)
     var watson_text_to_speech_token = "<%= process.env.WATSON_TEXT_TO_SPEECH_TOKEN %>" // TODO, shouldn't this be generated dynamically via mqtt request?
-    var watson_channel = 'iot-2/type/MQTTDevice/id/' + window.IOT_DEVICE_ID + '/evt/'+  "msgin" + '/fmt/json'
-    var failFunc = function() {
-
-    }
+    var watson_channel = 'iot-2/type/MQTTDevice/id/' + mqttCreds.IOT_DEVICE_ID + '/evt/'+  "msgin" + '/fmt/json'
     window.onload = function () {
             console.log("connecting");
+            var mqttCreds = loadMQTTCreds()
+            console.log(mqttCreds)
+
             //
             // clients['client1'].connect(Object.assign(options, {onSuccess: function() {document.getElementById("client1_div").style.border = "thick solid #0000FF"; } }));
+            var options = {
+              timeout: 40,
+              cleanSession: cleansession,
+              useSSL: useTLS,
+              userName: mqttCreds.IOT_API_KEY,
+              password: mqttCreds.IOT_AUTH_TOKEN
+            }
             clients['client1'].connect(Object.assign(options, {
                 onSuccess: function () {
-                    var local_channel = 'languagetest/translated/' + document.querySelector('#client1_language').value
-                    // var watson_channel = function(event){return 'iot-2/type/MQTTDevice/id/' + window.IOT_DEVICE_ID + '/evt/ '+  event + '/fmt/json'}
+                    // var local_channel = 'languagetest/translated/' + document.querySelector('#client1_language').value
+                    var watson_channel = 'iot-2/type/MQTTDevice/id/' + mqttCreds.IOT_DEVICE_ID + '/evt/'+  "toClients" + '/fmt/json'
+                    //function(event){return 'iot-2/type/MQTTDevice/id/' + mqttCreds.IOT_DEVICE_ID + '/evt/ '+  event + '/fmt/json'}
                     console.log('client1 has joined the session, subscribing to ' + watson_channel);
-                    publish(clients['client1']._getClientId().split(':').slice(-1)[0] + " has joined the session", 'iot-2/type/' + window.IOT_DEVICE_TYPE + '/id/' + window.IOT_DEVICE_ID + '/evt/logs/fmt/json', 2, 'client1');
+                    publish(clients['client1']._getClientId().split(':').slice(-1)[0] + " has joined the session", 'iot-2/type/' + mqttCreds.IOT_DEVICE_TYPE + '/id/' + mqttCreds.IOT_DEVICE_ID + '/evt/logs/fmt/json', 2, 'client1');
                     // request tts token
                     // publish("request", 'iot-2/type/MQTTDevice/id/' + window.IOT_DEVICE_ID + '/evt/tokenreq/fmt/json', 2, 'tokens');
                     // clients['tokens'].subscribe('iot-2/type/MQTTDevice/id/' + window.IOT_DEVICE_ID + '/evt/token/fmt/json')
@@ -56,25 +84,25 @@
                                {
                                  console.log("token client connected")
                                  // publish("request", 'iot-2/type/MQTTDevice/id/' + window.IOT_DEVICE_ID + '/evt/tokenreq/fmt/json', 2, 'tokens'); // TODO, should request a new token every hour
-                                 clients['tokens'].subscribe('iot-2/type/MQTTDevice/id/' + window.IOT_DEVICE_ID + '/evt/token/fmt/json')
+                                 clients['tokens'].subscribe('iot-2/type/MQTTDevice/id/' + mqttCreds.IOT_DEVICE_ID + '/evt/token/fmt/json')
                                 //  clients['tokens'].subscribe('iot-2/type/MQTTDevice/id/' + window.IOT_DEVICE_ID + '/evt/logs/fmt/json')
-                                 publish("request", 'iot-2/type/MQTTDevice/id/' + window.IOT_DEVICE_ID + '/evt/tokenreq/fmt/json', 2, 'tokens');
+                                 publish("request", 'iot-2/type/MQTTDevice/id/' + mqttCreds.IOT_DEVICE_ID + '/evt/tokenreq/fmt/json', 2, 'tokens');
 
-                                 clients['serverLogs'].connect(Object.assign(options, {
-                                         onSuccess: function() // request initial tts token
-                                           {
-                                             console.log("logging client connected")
-                                             clients['serverLogs'].subscribe('iot-2/type/MQTTDevice/id/' + window.IOT_DEVICE_ID + '/evt/logs/fmt/json',
-                                             {
-                                               onSuccess: function() {
-                                               // publish("client1 successfully subscribed", 'iot-2/type/MQTTDevice/id/' + window.IOT_DEVICE_ID + '/evt/logs/fmt/json', 2, 'serverLogs')
-                                             }
-                                           }
-                                         )
-                                       }
-                                     }
-                                   )
-                                 )
+                                 // clients['serverLogs'].connect(Object.assign(options, {
+                                 //         onSuccess: function() // request initial tts token
+                                 //           {
+                                 //             console.log("logging client connected")
+                                 //             clients['serverLogs'].subscribe('iot-2/type/MQTTDevice/id/' + mqttCreds.IOT_DEVICE_ID + '/evt/logs/fmt/json',
+                                 //             {
+                                 //               onSuccess: function() {
+                                 //               // publish("client1 successfully subscribed", 'iot-2/type/MQTTDevice/id/' + window.IOT_DEVICE_ID + '/evt/logs/fmt/json', 2, 'serverLogs')
+                                 //             }
+                                 //           }
+                                 //         )
+                                 //       }
+                                 //     }
+                                 //   )
+                                 // )
                                }
                              }
                              )
@@ -150,7 +178,7 @@
                     }
                   };
                   // publish($('#resultsText').val(),'languagetest/clientout/text/' + document.querySelector('#client1_language').value + '/' + clientId ,2, "client1")
-                  publish(j, 'iot-2/type/MQTTDevice/id/' + window.IOT_DEVICE_ID + '/evt/'+  "fromClient" + '/fmt/json' , 2, "client1")
+                  publish(j, 'iot-2/type/MQTTDevice/id/' + mqttCreds.IOT_DEVICE_ID + '/evt/'+  "fromClient" + '/fmt/json' , 2, "client1")
                   $('#resultsText').val('')
                 }
             }
@@ -422,13 +450,13 @@
                     publish(
                             {
                               'd': {
-                                'language': document.querySelector('#client1_language').value,
-                                'message': document.querySelector('#client1_message').value,
+                                'sourceLanguage': document.querySelector('#client1_language').value,
+                                'payload': document.querySelector('#client1_message').value,
                                 'client': clients['client1']._getClientId()
                                 // 'client': 'client1'
                               }
                             },
-                          'iot-2/type/MQTTDevice/id/' + window.IOT_DEVICE_ID + '/evt/fromClient/fmt/json',
+                          'iot-2/type/MQTTDevice/id/' + mqttCreds.IOT_DEVICE_ID + '/evt/fromClient/fmt/json',
                           2,
                           'client1'
                     )

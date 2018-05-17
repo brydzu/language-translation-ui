@@ -230,8 +230,8 @@ clients['client1'].onMessageArrived = function (message) {
   console.log("client message received")
   console.log(message._getPayloadString())
   debugMessage = message
-  var msgObj = JSON.parse(message.payloadString).d
-  // console.log(msgObj)
+  var msgObj = JSON.parse(message.payloadString).d || JSON.parse(message.payloadString)
+  console.log(msgObj)
   // console.log("language: " + msgObj.language)
   // console.log("message: " + msgObj.payload)
   // document.getElementById("client1_messages").value += message.payloadString + '\n'
