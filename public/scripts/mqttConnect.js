@@ -189,7 +189,7 @@ function addClient(clientName, language) {
                             'client': '${clientName}'
                           }
                         },
-                      'iot-2/type' + mqttCreds.IOT_DEVICE_TYPE + 'id/${process.env.IOT_DEVICE_ID}/evt/fromClient/fmt/json',
+                      'iot-2/type/' + mqttCreds.IOT_DEVICE_TYPE + 'MQTTDevice/id/' + mqttCreds.IOT_DEVICE_ID + '/evt/'+  "fromClient"
                       2,
                       '${clientName}'
       )">Submit</button>

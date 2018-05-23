@@ -178,7 +178,7 @@
                     }
                   };
                   // publish($('#resultsText').val(),'languagetest/clientout/text/' + document.querySelector('#client1_language').value + '/' + clientId ,2, "client1")
-                  publish(j, 'iot-2/type/MQTTDevice/id/' + mqttCreds.IOT_DEVICE_ID + '/evt/'+  "fromClient" + '/fmt/json' , 2, "client1")
+                  publish(j, 'iot-2/type/' + mqttCreds.IOT_DEVICE_TYPE + '/id/' + mqttCreds.IOT_DEVICE_ID + '/evt/'+  "fromClient" + '/fmt/json' , 2, "client1")
                   $('#resultsText').val('')
                 }
             }
